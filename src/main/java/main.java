@@ -90,9 +90,7 @@ public class main {
         int code = connection.getResponseCode();
         return (MYREQUEST + "\nEl Header enviado ha sido: Matricula:"+ connection.getRequestProperty("Matricula") +"\nY la respuesta del servidor ha sido: " +code);
     }
-
-
-
+        //CONTROL MAIN
     public static void main (String[] args) throws IOException {
        String url = ReadURL();
         boolean key = false;
@@ -107,6 +105,7 @@ public class main {
                 url = ReadURL();
             }
         } while (!key);
+
         //URL EXAMPLES
         //"https://www.example.org" | "https://www.google.com <- Img but 0 paragraph |
         // https://www.jotunheim-ragnarok.net/?module=account&action=create <- FORMS
