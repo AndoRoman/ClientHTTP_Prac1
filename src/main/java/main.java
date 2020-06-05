@@ -1,6 +1,9 @@
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.util.Scanner;
 import java.net.URL;
 
@@ -25,12 +28,12 @@ public class main {
         return in.nextLine();
     }
     //Function to Count lines on Document
-    public static int LineCount(Document Input) { ;
+    public static int LineCount(Document Input) {
         return (Input.html().split("\n")).length;
     }
     //Function to Count <p> on Document
     public static int paraCount(Document Input) {
-        int num = 0;
+        int num;
         filter = Input.html().split("<p>");
         num = (filter.length)/2;
         return num;
@@ -39,8 +42,8 @@ public class main {
     public static int imgCount() {
         String[] filter2 = null;
         if(filter.length > 1) {
-            for (int i = 0; i < filter.length; i++) {
-                filter2 = filter[i].split("img");
+            for (String s : filter) {
+                filter2 = s.split("img");
             }
             return filter2.length;
         }
@@ -50,17 +53,17 @@ public class main {
     }
     //Function to Count FORM GET
     public static int formGET(Document Input) {
-        int num = 0;
+        int num;
         num = Input.getElementsByTag("form").attr("method", "GET").toArray().length;
         return num;
     }
     //Function to Count FORM POST
     public static int formPOST(Document Input) {
-        int num = 0;
+        int num;
         num = Input.getElementsByTag("form").attr("method", "POST").toArray().length;
         return num;
     }
-    //Function form Input
+    //Functions form Input
     public static String formInputGET(Document In) {
         return In.getElementsByTag("form").attr("method", "GET").
                 select("input").toString();
@@ -69,6 +72,26 @@ public class main {
         return In.getElementsByTag("form").attr("method", "POST").
                 select("input").toString();
     }
+    //Function of set Request to server
+    public static String SendPOST(String conect) throws IOException {
+        URL gate = new URL(conect);
+        HttpURLConnection connection = (HttpURLConnection) gate.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Matricula", "20160415");
+        connection.setDoOutput(true);
+
+        String MYREQUEST = "Asignatura=practica1"; //<-- Parameter
+        DataOutputStream ThePack = new DataOutputStream(connection.getOutputStream());
+        ThePack.writeBytes(MYREQUEST);
+        ThePack.flush();
+        ThePack.close();
+
+        //Response of Serve
+        int code = connection.getResponseCode();
+        return (MYREQUEST + "\nEl Header enviado ha sido: Matricula:"+ connection.getRequestProperty("Matricula") +"\nY la respuesta del servidor ha sido: " +code);
+    }
+
+
 
     public static void main (String[] args) throws IOException {
        String url = ReadURL();
@@ -100,8 +123,13 @@ public class main {
         System.out.println("El Documento tiene: [" +formGET(docHTML)+ "] Formulario que implementan el metodo GET y [" +
                formPOST(docHTML)+ "] que implementan el metodo POST");
         //Print form Input and type of input
-        System.out.println("\nEn los form que implementan [GET] se tiene los siguientes input: \n[" +formInputGET(docHTML)+ "]\n");
-        System.out.println("\nEn los form que implementan [POST] se tiene los siguientes input: \n[" +formInputPOST(docHTML)+ "]\n");
+        System.out.println("\nEn los form que implementan [GET] se tiene los siguientes input: \n["
+                +formInputGET(docHTML)+ "]\n");
+        System.out.println("\nEn los form que implementan [POST] se tiene los siguientes input: y \n["
+                +formInputPOST(docHTML)+ "]\n");
+        //Print message sent
+        System.out.println("Al servidor se le ha enviado la siguiente petición: " + SendPOST(url));
+
     }
 
 
