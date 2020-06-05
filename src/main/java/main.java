@@ -48,6 +48,27 @@ public class main {
             return 0;
         }
     }
+    //Function to Count FORM GET
+    public static int formGET(Document Input) {
+        int num = 0;
+        num = Input.getElementsByTag("form").attr("method", "GET").toArray().length;
+        return num;
+    }
+    //Function to Count FORM POST
+    public static int formPOST(Document Input) {
+        int num = 0;
+        num = Input.getElementsByTag("form").attr("method", "POST").toArray().length;
+        return num;
+    }
+    //Function form Input
+    public static String formInputGET(Document In) {
+        return In.getElementsByTag("form").attr("method", "GET").
+                select("input").toString();
+    }
+    public static String formInputPOST(Document In) {
+        return In.getElementsByTag("form").attr("method", "POST").
+                select("input").toString();
+    }
 
     public static void main (String[] args) throws IOException {
        String url = ReadURL();
@@ -63,15 +84,24 @@ public class main {
                 url = ReadURL();
             }
         } while (!key);
-        //String url = "https://www.example.org";
+        //URL EXAMPLES
+        //"https://www.example.org" | "https://www.google.com <- Img but 0 paragraph |
+        // https://www.jotunheim-ragnarok.net/?module=account&action=create <- FORMS
+
         //GET Document HTML to URL
         Document docHTML = Jsoup.connect(url).get();
         //Print Num of Line
-        System.out.println("El Documento tiene: "+LineCount(docHTML)+" Lineas de codigo.");
+        System.out.println("El Documento tiene: ["+LineCount(docHTML)+"] Lineas de codigo.");
         //Print Num of <p>
-        System.out.println("El Documento tiene: " + paraCount(docHTML)+ " Parrafos <p>");
+        System.out.println("El Documento tiene: [" + paraCount(docHTML)+ "] Parrafos <p>");
         //Print Num of <img>
-        System.out.println("El Documento tiene: " + imgCount()+" Imagenes dentro de los Parrafos");
+        System.out.println("El Documento tiene: [" + imgCount()+"] Imagenes dentro de los Parrafos");
+        //Print Num of form method: GET & POST
+        System.out.println("El Documento tiene: [" +formGET(docHTML)+ "] Formulario que implementan el metodo GET y [" +
+               formPOST(docHTML)+ "] que implementan el metodo POST");
+        //Print form Input and type of input
+        System.out.println("\nEn los form que implementan [GET] se tiene los siguientes input: \n[" +formInputGET(docHTML)+ "]\n");
+        System.out.println("\nEn los form que implementan [POST] se tiene los siguientes input: \n[" +formInputPOST(docHTML)+ "]\n");
     }
 
 
